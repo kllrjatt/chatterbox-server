@@ -10,7 +10,7 @@ var app = {
   friends: {},
   messages: [],
 
-  init: function() {
+  init: function () {
     // Get username
     app.username = window.location.search.substr(10);
 
@@ -30,12 +30,12 @@ var app = {
     app.fetch(false);
 
     // Poll for new messages
-    setInterval(function() {
+    setInterval(function () {
       app.fetch(true);
     }, 3000);
   },
 
-  send: function(message) {
+  send: function (message) {
     app.startSpinner();
 
     // POST the message to the server
@@ -56,13 +56,13 @@ var app = {
     });
   },
 
-  fetch: function(animate) {
+  fetch: function (animate) {
     $.ajax({
       url: app.server,
       type: 'GET',
       data: { order: '-createdAt' },
       contentType: 'application/json',
-      success: function(data) {
+      success: function (data) {
         // Don't bother if we have nothing to work with
         if (!data.results || !data.results.length) { return; }
 
@@ -84,42 +84,42 @@ var app = {
           app.lastMessageId = mostRecentMessage.objectId;
         }
       },
-      error: function(error) {
+      error: function (error) {
         console.error('chatterbox: Failed to fetch messages', error);
       }
     });
   },
 
-  clearMessages: function() {
+  clearMessages: function () {
     app.$chats.html('');
   },
 
-  renderMessages: function(messages, animate) {
+  renderMessages: function (messages, animate) {
     // Clear existing messages`
     app.clearMessages();
     app.stopSpinner();
     if (Array.isArray(messages)) {
       // Add all fetched messages that are in our current room
       messages
-        .filter(function(message) {
+        .filter(function (message) {
           return message.roomname === app.roomname ||
-                 app.roomname === 'lobby' && !message.roomname;
+            app.roomname === 'lobby' && !message.roomname;
         })
         .forEach(app.renderMessage);
     }
 
     // Make it scroll to the top
     if (animate) {
-      $('body').animate({scrollTop: '0px'}, 'fast');
+      $('body').animate({ scrollTop: '0px' }, 'fast');
     }
   },
 
-  renderRoomList: function(messages) {
+  renderRoomList: function (messages) {
     app.$roomSelect.html('<option value="__newRoom">New room...</option>');
 
     if (messages) {
       var rooms = {};
-      messages.forEach(function(message) {
+      messages.forEach(function (message) {
         var roomname = message.roomname;
         if (roomname && !rooms[roomname]) {
           // Add the room to the select menu
@@ -135,7 +135,7 @@ var app = {
     app.$roomSelect.val(app.roomname);
   },
 
-  renderRoom: function(roomname) {
+  renderRoom: function (roomname) {
     // Prevent XSS by escaping with DOM methods
     var $option = $('<option/>').val(roomname).text(roomname);
 
@@ -143,7 +143,7 @@ var app = {
     app.$roomSelect.append($option);
   },
 
-  renderMessage: function(message) {
+  renderMessage: function (message) {
     if (!message.roomname) {
       message.roomname = 'lobby';
     }
@@ -169,7 +169,7 @@ var app = {
 
   },
 
-  handleUsernameClick: function(event) {
+  handleUsernameClick: function (event) {
 
     // Get username from data attribute
     var username = $(event.target).data('username');
@@ -186,7 +186,7 @@ var app = {
     }
   },
 
-  handleRoomChange: function(event) {
+  handleRoomChange: function (event) {
 
     var selectIndex = app.$roomSelect.prop('selectedIndex');
     // New room is always the first option
@@ -211,7 +211,7 @@ var app = {
     app.renderMessages(app.messages);
   },
 
-  handleSubmit: function(event) {
+  handleSubmit: function (event) {
     var message = {
       username: app.username,
       text: app.$message.val(),
@@ -224,12 +224,12 @@ var app = {
     event.preventDefault();
   },
 
-  startSpinner: function() {
+  startSpinner: function () {
     $('.spinner img').show();
     $('form input[type=submit]').attr('disabled', 'true');
   },
 
-  stopSpinner: function() {
+  stopSpinner: function () {
     $('.spinner img').fadeOut('fast');
     $('form input[type=submit]').attr('disabled', null);
   }

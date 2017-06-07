@@ -24,7 +24,7 @@ app = {
 
   server: 'https://api.parse.com/1/classes/messages/',
 
-  init: function() {
+  init: function () {
     // Get username
     app.username = window.location.search.substr(10);
 
@@ -34,12 +34,12 @@ app = {
     app.$text = $('#message');
 
     app.loadMsgs();
-    setInterval (app.loadMsgs.bind(app), 1000);
+    setInterval(app.loadMsgs.bind(app), 1000);
 
     $('#send').on('submit', app.handleSubmit);
   },
 
-  handleSubmit: function(e) {
+  handleSubmit: function (e) {
     e.preventDefault();
 
     var message = {
@@ -52,14 +52,14 @@ app = {
     app.sendMsg(message);
   },
 
-  renderMessage: function(message) {
-    var $user = $('<div>', {class: 'user'}).text(message.username);
-    var $text = $('<div>', {class: 'text'}).text(message.text);
-    var $message = $('<div>', {class: 'chat', 'data-id': message.objectId }).append($user, $text);
+  renderMessage: function (message) {
+    var $user = $('<div>', { class: 'user' }).text(message.username);
+    var $text = $('<div>', { class: 'text' }).text(message.text);
+    var $message = $('<div>', { class: 'chat', 'data-id': message.objectId }).append($user, $text);
     return $message;
   },
 
-  displayMessage: function(message) {
+  displayMessage: function (message) {
     if (!app.onscreenMessages[message.objectId]) {
       var $html = app.renderMessage(message);
       $('#chats').prepend($html);
@@ -67,49 +67,49 @@ app = {
     }
   },
 
-  displayMessages: function(messages) {
+  displayMessages: function (messages) {
     for (var i = messages.length; i > 0; i--) {
       app.displayMessage(messages[i - 1]);
     }
   },
 
-  loadMsgs: function() {
+  loadMsgs: function () {
     $.ajax({
       url: app.server,
       data: { order: '-createdAt' },
       contentType: 'application/json',
-      success: function(json) {
+      success: function (json) {
         app.displayMessages(json.results);
       },
-      complete: function() {
+      complete: function () {
         app.stopSpinner();
       }
     });
   },
 
-  sendMsg: function(message) {
+  sendMsg: function (message) {
     app.startSpinner();
     $.ajax({
       type: 'POST',
       url: app.server,
       data: JSON.stringify(message),
       contentType: 'application/json',
-      success: function(json) {
+      success: function (json) {
         message.objectId = json.objectId;
         app.displayMessage(message);
       },
-      complete: function() {
+      complete: function () {
         app.stopSpinner();
       }
     });
   },
 
-  startSpinner: function() {
+  startSpinner: function () {
     $('.spinner img').show();
     $('form input[type=submit]').attr('disabled', 'true');
   },
 
-  stopSpinner: function() {
+  stopSpinner: function () {
     $('.spinner img').fadeOut('fast');
     $('form input[type=submit]').attr('disabled', null);
   }
@@ -133,11 +133,11 @@ var Messages = Backbone.Collection.extend({
   model: Message,
   url: 'https://api.parse.com/1/classes/messages/',
 
-  loadMsgs: function() {
-    this.fetch({data: { order: '-createdAt' }});
+  loadMsgs: function () {
+    this.fetch({ data: { order: '-createdAt' } });
   },
 
-  parse: function(response, options) {
+  parse: function (response, options) {
     var results = [];
     for (var i = response.results.length - 1; i >= 0; i--) {
       results.push(response.results[i]);
@@ -149,7 +149,7 @@ var Messages = Backbone.Collection.extend({
 
 var FormView = Backbone.View.extend({
 
-  initialize: function() {
+  initialize: function () {
     this.collection.on('sync', this.stopSpinner, this);
   },
 
@@ -157,7 +157,7 @@ var FormView = Backbone.View.extend({
     'submit #send': 'handleSubmit'
   },
 
-  handleSubmit: function(e) {
+  handleSubmit: function (e) {
     e.preventDefault();
 
     this.startSpinner();
@@ -170,12 +170,12 @@ var FormView = Backbone.View.extend({
     $text.val('');
   },
 
-  startSpinner: function() {
+  startSpinner: function () {
     this.$('.spinner img').show();
     this.$('form input[type=submit]').attr('disabled', 'true');
   },
 
-  stopSpinner: function() {
+  stopSpinner: function () {
     this.$('.spinner img').fadeOut('fast');
     this.$('form input[type=submit]').attr('disabled', null);
   }
@@ -184,7 +184,7 @@ var FormView = Backbone.View.extend({
 
 var MessageView = Backbone.View.extend({
 
-  initialize: function() {
+  initialize: function () {
     this.model.on('change', this.render, this);
   },
 
@@ -193,7 +193,7 @@ var MessageView = Backbone.View.extend({
                           <div class="text"><%- text %></div> \
                         </div>'),
 
-  render: function() {
+  render: function () {
     this.$el.html(this.template(this.model.attributes));
     return this.$el;
   }
@@ -202,18 +202,18 @@ var MessageView = Backbone.View.extend({
 
 var MessagesView = Backbone.View.extend({
 
-  initialize: function() {
+  initialize: function () {
     this.collection.on('sync', this.render, this);
     this.onscreenMessages = {};
   },
 
-  render: function() {
+  render: function () {
     this.collection.forEach(this.renderMessage, this);
   },
 
-  renderMessage: function(message) {
+  renderMessage: function (message) {
     if (!this.onscreenMessages[message.get('objectId')]) {
-      var messageView = new MessageView({model: message});
+      var messageView = new MessageView({ model: message });
       this.$el.prepend(messageView.render());
       this.onscreenMessages[message.get('objectId')] = true;
     }
