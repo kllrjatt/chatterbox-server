@@ -46,18 +46,20 @@ exports.requestHandler = function (request, response) {
   var responseCode;
 
   if (request.method === 'GET') {
-    // send appropriate response for get 
-    sendResponse(response, messages, responseCode);
-    // } else if (request.type === 'POST') {
-    //   // assign correct value of response code 
-    //   responseCode = 300;
-    //   // send appropriate response for post
-    //   sendResponse(response, messages, defaultCorsHeaders, responseCode);
-    // } else if (request.type === 'OPTIONS') {
-    //   // assign correct value of response code 
-    //   responseCode = 500;
-    //   // send appropriate response for options
-    //   sendResponse(response, messages, defaultCorsHeaders, responseCode);
+    // send appropriate response for get , send messages array as result 
+    sendResponse(response, { results: messages }, responseCode);
+  } else if (request.method === 'POST') {
+    // assign correct value of response code 
+    responseCode = 201;
+    // send appropriate response for post
+    // send message sent response on post
+    sendResponse(response, 'Message Sent!', responseCode);
+  } else if (request.method === 'OPTIONS') {
+    // assign correct value of response code 
+    responseCode = 200;
+    // send appropriate response for options
+    // send no response for options
+    sendResponse(response, null, responseCode);
   }
 };
 
