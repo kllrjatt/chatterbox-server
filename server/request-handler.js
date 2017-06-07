@@ -3,42 +3,31 @@ var defaultCorsHeaders = {
   'access-control-allow-origin': '*',
   'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
   'access-control-allow-headers': 'content-type, accept',
-  'access-control-max-age': 10 // Seconds.
-};
-
-var requestHandler = function (request, response) {
-  // Request and Response come from node's http module.
-  //
-  // They include information about both the incoming request, such as
-  // headers and URL, and about the outgoing response, such as its status
-  // and content.
-  //
-  // Documentation for both request and response can be found in the HTTP section at
-  // http://nodejs.org/documentation/api/
-
-  // Do some basic logging.
-  //
-  // Adding more logging to your server can be an easy way to get passive
-  // debugging help, but you should always be careful about leaving stray
-  // console.logs in your code.
-  console.log('Serving request type ' + request.method + ' for url ' + request.url);
-
-  // The outgoing status.
-  var statusCode = 200;
-
-  // See the note below about CORS headers.
-  var headers = defaultCorsHeaders;
-
+  'access-control-max-age': 10, // Seconds.
   // Tell the client we are sending them plain text.
   //
   // You will need to change this if you are sending something
   // other than plain text, like JSON or HTML.
-  headers['Content-Type'] = 'text/plain';
+  'Content-Type': 'application/json'
+};
 
+// message storage for chatter box 
+// add first message to get test data back
+var messages = [{
+  text: 'First Message',
+  roomname: 'lobby',
+  username: 'Gunpreet'
+}];
+
+var sendResponse = function (response, data, statusCode) {
+  // The outgoing status.
+  if (!statusCode) {
+    statusCode = 200;
+  }
+  // check what type of request has been sent by the client
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
-  response.writeHead(statusCode, headers);
-
+  response.writeHead(statusCode, defaultCorsHeaders);
   // Make sure to always call response.end() - Node may not send
   // anything back to the client until you do. The string you pass to
   // response.end() will be the body of the response - i.e. what shows
@@ -46,8 +35,29 @@ var requestHandler = function (request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  response.end('Hello, World!');
+  response.end(JSON.stringify(data));
 };
 
+exports.requestHandler = function (request, response) {
+  console.log('Serving request type ' + request.method + ' for url ' + request.url);
+  // check the request type to determin what to do 
 
-module.exports = requestHandler;
+  // declare response code variable 
+  var responseCode;
+
+  if (request.method === 'GET') {
+    // send appropriate response for get 
+    sendResponse(response, messages, responseCode);
+    // } else if (request.type === 'POST') {
+    //   // assign correct value of response code 
+    //   responseCode = 300;
+    //   // send appropriate response for post
+    //   sendResponse(response, messages, defaultCorsHeaders, responseCode);
+    // } else if (request.type === 'OPTIONS') {
+    //   // assign correct value of response code 
+    //   responseCode = 500;
+    //   // send appropriate response for options
+    //   sendResponse(response, messages, defaultCorsHeaders, responseCode);
+  }
+};
+
