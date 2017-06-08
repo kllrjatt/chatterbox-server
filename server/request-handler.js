@@ -13,23 +13,7 @@ var defaultCorsHeaders = {
 
 // message storage for chatter box 
 // add first message to get test data back
-var messages = [{
-  text: 'First Message',
-  roomname: 'lobby',
-  username: 'Gunpreet'
-}, {
-  text: 'should have said "1st!"',
-  roomname: 'lobby',
-  username: 'Tyler'
-}, {
-  text: 'actually..I can do it now "First!"',
-  roomname: 'lobby',
-  username: 'Gunpreet'
-}, {
-  text: 'Too Late',
-  roomname: 'lobby',
-  username: 'Tyler'
-}];
+var messages = [];
 
 // add buld data 
 var buildData = function (request, callback) {
