@@ -31,7 +31,7 @@ var buildData = function (request, callback) {
 
 var objectIdCounter = 0;
 
-
+var welcomeMessage = { results: [{ username: 'Welcome to the Room', roomname: 'lobby', text: 'Please enjoy responsibliy' }] };
 
 var sendResponse = function (response, data, statusCode) {
   // The outgoing status.
@@ -66,8 +66,14 @@ exports.requestHandler = function (request, response) {
 
 
   if (request.method === 'GET') {
-    // send appropriate response for get , send messages array as result 
-    sendResponse(response, { results: messages }, responseCode);
+    // check if messages are present
+    if (messages.length > 0) {
+      // send appropriate response for get , send messages array as result 
+      sendResponse(response, { results: messages }, responseCode);
+    } else {
+      sendResponse(response, welcomeMessage, responseCode);
+    }
+
   } else if (request.method === 'POST') {
     // assign correct value of response code 
     responseCode = 201;
