@@ -59,7 +59,7 @@ exports.requestHandler = function (request, response) {
   // declare response code variable 
   var responseCode;
 
-  if ('/chatterbox/classes/messages?order=-createdAt'.split('?')[0].slice(11) === '/classes/messages') {
+  if (request.url.split('?')[0].slice(11) === '/classes/messages') {
     if (request.method === 'GET') {
       // send appropriate response for get , send messages array as result 
       sendResponse(response, { results: messages }, responseCode);
