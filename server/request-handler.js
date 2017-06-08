@@ -17,7 +17,25 @@ var messages = [{
   text: 'First Message',
   roomname: 'lobby',
   username: 'Gunpreet'
+}, {
+  text: 'should have said "1st!"',
+  roomname: 'lobby',
+  username: 'Tyler'
+}, {
+  text: 'actually..I can do it now "First!"',
+  roomname: 'lobby',
+  username: 'Gunpreet'
+}, {
+  text: 'Too Late',
+  roomname: 'lobby',
+  username: 'Tyler'
 }];
+
+var buildData = function (request) {
+  request.on('data', function (chunk) {
+    return chunk.toString();
+  });
+};
 
 var sendResponse = function (response, data, statusCode) {
   // The outgoing status.
@@ -51,6 +69,9 @@ exports.requestHandler = function (request, response) {
   } else if (request.method === 'POST') {
     // assign correct value of response code 
     responseCode = 201;
+
+    messages.push(buildData(request));
+
     // send appropriate response for post
     // send message sent response on post
     sendResponse(response, 'Message Sent!', responseCode);
