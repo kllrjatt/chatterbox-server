@@ -31,11 +31,23 @@ var messages = [{
   username: 'Tyler'
 }];
 
-var buildData = function (request) {
+// add buld data 
+var buildData = function (request, callback) {
+  var data;
+  // data on request, convert chunk to string 
   request.on('data', function (chunk) {
-    return chunk.toString();
+    // convert chuck to string 
+    data = chunk.toString();
+  });
+  // wait for the function to execute 
+  request.on('end', function () {
+    callback(JSON.parse(data));
   });
 };
+
+var objectIdCounter = 0;
+
+
 
 var sendResponse = function (response, data, statusCode) {
   // The outgoing status.
@@ -50,7 +62,7 @@ var sendResponse = function (response, data, statusCode) {
   // anything back to the client until you do. The string you pass to
   // response.end() will be the body of the response - i.e. what shows
   // up in the browser.
-  //
+
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
   response.end(JSON.stringify(data));
@@ -63,24 +75,32 @@ exports.requestHandler = function (request, response) {
   // declare response code variable 
   var responseCode;
 
-  if (request.method === 'GET') {
-    // send appropriate response for get , send messages array as result 
-    sendResponse(response, { results: messages }, responseCode);
-  } else if (request.method === 'POST') {
-    // assign correct value of response code 
-    responseCode = 201;
+  if ('/chatterbox/classes/messages?order=-createdAt'.split('?')[0].slice(11) === '/classes/messages') {
+    if (request.method === 'GET') {
+      // send appropriate response for get , send messages array as result 
+      sendResponse(response, { results: messages }, responseCode);
+    } else if (request.method === 'POST') {
+      // assign correct value of response code 
+      responseCode = 201;
+      // call builddata to send messages to the array 
+      buildData(request, function (message) {
+        message.objectId = ++objectIdCounter;
+        // add message  to messages array 
+        messages.push(message);
+        // send appropriate response for post
+        // send message sent response on post
+        sendResponse(response, 'Message Sent!', responseCode);
+      });
 
-    messages.push(buildData(request));
-
-    // send appropriate response for post
-    // send message sent response on post
-    sendResponse(response, 'Message Sent!', responseCode);
-  } else if (request.method === 'OPTIONS') {
-    // assign correct value of response code 
-    responseCode = 200;
-    // send appropriate response for options
-    // send no response for options
-    sendResponse(response, null, responseCode);
+    } else if (request.method === 'OPTIONS') {
+      // assign correct value of response code 
+      responseCode = 200;
+      // send appropriate response for options
+      // send no response for options
+      sendResponse(response, null, responseCode);
+    }
+  } else {
+    sendResponse(response, null, 404);
   }
 };
 
