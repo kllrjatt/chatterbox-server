@@ -59,32 +59,34 @@ exports.requestHandler = function (request, response) {
   // declare response code variable 
   var responseCode;
 
-  if (request.url.split('?')[0].slice(11) === '/classes/messages') {
-    if (request.method === 'GET') {
-      // send appropriate response for get , send messages array as result 
-      sendResponse(response, { results: messages }, responseCode);
-    } else if (request.method === 'POST') {
-      // assign correct value of response code 
-      responseCode = 201;
-      // call builddata to send messages to the array 
-      buildData(request, function (message) {
-        message.objectId = ++objectIdCounter;
-        // add message  to messages array 
-        messages.push(message);
-        // send appropriate response for post
-        // send message sent response on post
-        sendResponse(response, 'Message Sent!', responseCode);
-      });
+  // if (request.url.split('?')[0].slice(11) === '/classes/messages') {
+  // } else {
+  //   sendResponse(response, null, 404);
+  // }
 
-    } else if (request.method === 'OPTIONS') {
-      // assign correct value of response code 
-      responseCode = 200;
-      // send appropriate response for options
-      // send no response for options
-      sendResponse(response, null, responseCode);
-    }
-  } else {
-    sendResponse(response, null, 404);
+
+  if (request.method === 'GET') {
+    // send appropriate response for get , send messages array as result 
+    sendResponse(response, { results: messages }, responseCode);
+  } else if (request.method === 'POST') {
+    // assign correct value of response code 
+    responseCode = 201;
+    // call builddata to send messages to the array 
+    buildData(request, function (message) {
+      message.objectId = ++objectIdCounter;
+      // add message  to messages array 
+      messages.push(message);
+      // send appropriate response for post
+      // send message sent response on post
+      sendResponse(response, 'Message Sent!', responseCode);
+    });
+
+  } else if (request.method === 'OPTIONS') {
+    // assign correct value of response code 
+    responseCode = 200;
+    // send appropriate response for options
+    // send no response for options
+    sendResponse(response, null, responseCode);
   }
 };
 
